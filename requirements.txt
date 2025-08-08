@@ -1,0 +1,9 @@
+# Text extraction dependencies
+PyMuPDF>=1.23.0
+python-pptx>=0.6.21
+pytesseract>=0.3.10
+Pillow>=10.0.0
+
+# Dependency management
+# Note: If you have TensorFlow installed, you may need to manage typing-extensions version
+# typing-extensions<4.6.0  # Uncomment if TensorFlow compatibility is needed
