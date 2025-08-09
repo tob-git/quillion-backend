@@ -1,8 +1,11 @@
-# Text extraction dependencies
+# Text extraction and cleaning dependencies
 PyMuPDF>=1.23.0
 python-pptx>=0.6.21
 pytesseract>=0.3.10
 Pillow>=10.0.0
+
+# The clean_text.py module requires no additional dependencies
+# It uses only Python standard library modules (re, collections, typing)
 
 # Dependency management
 # Note: If you have TensorFlow installed, you may need to manage typing-extensions version

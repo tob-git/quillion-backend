@@ -78,8 +78,9 @@ def _extract_pdf_text(file_path: str, file_title: str) -> Dict:
     
     doc = fitz.open(file_path)
     sections = []
+    total_pages = len(doc)  # Store page count before processing
     
-    for page_num in range(len(doc)):
+    for page_num in range(total_pages):
         try:
             page = doc.load_page(page_num)
             text = page.get_text("text").strip()
@@ -105,7 +106,7 @@ def _extract_pdf_text(file_path: str, file_title: str) -> Dict:
     return {
         "doc": {
             "title": file_title,
-            "pages": len(doc)
+            "pages": total_pages
         },
         "sections": sections
     }
