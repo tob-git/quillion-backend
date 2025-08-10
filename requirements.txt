@@ -10,3 +10,5 @@ Pillow>=10.0.0
 # Dependency management
 # Note: If you have TensorFlow installed, you may need to manage typing-extensions version
 # typing-extensions<4.6.0  # Uncomment if TensorFlow compatibility is needed
+openai>=1.0.0
+httpx>=0.24.0

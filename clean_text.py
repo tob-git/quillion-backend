@@ -18,6 +18,7 @@ HEADER_FOOTER_PATTERN = re.compile(r'^\s*(header|footer).*', re.IGNORECASE)
 REFERENCE_START_PATTERN = re.compile(r'^(references|bibliography|appendix)', re.IGNORECASE)
 CITATION_URL_PATTERN = re.compile(r'(https?://|www\.|doi:|isbn:|issn:|\[\d+\]|^\d+\.)', re.IGNORECASE)
 COURSE_CODE_PATTERN = re.compile(r'\b[A-Za-z]{3}\d{3}\b', re.IGNORECASE)
+DR_NAME_PATTERN = re.compile(r'\bdr\.?\s+[a-zA-Z]+(?:\s+[a-zA-Z]+)*', re.IGNORECASE)
 BOILERPLATE_PATTERNS = [
     re.compile(r'all rights reserved', re.IGNORECASE),
     re.compile(r'©', re.IGNORECASE),
@@ -72,6 +73,9 @@ def clean_extracted_sections(sections: List[Dict]) -> List[Dict]:
         
         # Remove course codes (3 letters + 3 digits)
         text = _remove_course_codes(text)
+        
+        # Remove Dr. names
+        text = _remove_dr_names(text)
         
         # Collapse whitespace
         text = _collapse_whitespace(text)
@@ -184,6 +188,12 @@ def _remove_course_codes(text: str) -> str:
     """Remove course codes (3 letters + 3 digits format like ASU111, CSE101)."""
     # Remove course codes from the text
     return COURSE_CODE_PATTERN.sub('', text)
+
+
+def _remove_dr_names(text: str) -> str:
+    """Remove Dr. names (like 'Dr. Mohamed', 'Dr Mohamed Kohail', etc.)."""
+    # Remove Dr. names from the text
+    return DR_NAME_PATTERN.sub('', text)
 
 
 def _collapse_whitespace(text: str) -> str:

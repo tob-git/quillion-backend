@@ -51,7 +51,7 @@ STOPWORDS = {
     'spend', 'spent', 'spending', 'grow', 'grew', 'grown', 'growing', 'open',
     'opened', 'opening', 'walk', 'walked', 'walking', 'win', 'won', 'winning',
     'offer', 'offered', 'offering', 'remember', 'remembered', 'remembering',
-    'love', 'loved', 'loving', 'consider', 'considered', 'considering'
+    'love', 'loved', 'loving', 'consider', 'considered', 'considering','asu','eng','ece','cse'
 }
 
 # Precompiled regex patterns
