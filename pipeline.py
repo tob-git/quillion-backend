@@ -135,6 +135,13 @@ class OpenAIClient:
         Returns:
             (response_text, prompt_tokens, completion_tokens)
         """
+        print(f"🤖 Making OpenAI API call to {model}")
+        print(f"📋 Request parameters: temperature={temperature}, max_tokens={max_tokens}")
+        print(f"💬 Messages ({len(messages)} total):")
+        for i, msg in enumerate(messages):
+            content_preview = msg['content'][:200] + "..." if len(msg['content']) > 200 else msg['content']
+            print(f"   {i+1}. {msg['role']}: {content_preview}")
+        
         for attempt in range(self.max_retries + 1):
             try:
                 # Prepare request params
@@ -151,6 +158,8 @@ class OpenAIClient:
                 except:
                     pass  # Ignore if seed not supported
                 
+                print(f"📤 Sending request to OpenAI (attempt {attempt + 1}/{self.max_retries + 1})...")
+                
                 response = await self.client.chat.completions.create(**params)
                 
                 content = response.choices[0].message.content or ""
@@ -160,15 +169,27 @@ class OpenAIClient:
                 prompt_tokens = usage.prompt_tokens if usage else estimate_tokens('\n'.join(m['content'] for m in messages))
                 completion_tokens = usage.completion_tokens if usage else estimate_tokens(content)
                 
+                print(f"📥 OpenAI response received!")
+                print(f"📊 Token usage: {prompt_tokens} prompt + {completion_tokens} completion = {prompt_tokens + completion_tokens} total")
+                print(f"📝 Response content ({len(content)} chars):")
+                content_preview = content[:500] + "..." if len(content) > 500 else content
+                print(content_preview)
+                
                 return content, prompt_tokens, completion_tokens
                 
             except (openai.RateLimitError, openai.APITimeoutError, httpx.TimeoutException) as e:
+                print(f"⚠️ API error on attempt {attempt + 1}: {type(e).__name__}: {e}")
                 if attempt == self.max_retries:
+                    print(f"❌ Max retries exceeded for API call")
                     raise
                 # Exponential backoff
-                await asyncio.sleep(2 ** attempt)
+                wait_time = 2 ** attempt
+                print(f"⏳ Waiting {wait_time}s before retry...")
+                await asyncio.sleep(wait_time)
             except Exception as e:
+                print(f"🚨 Unexpected error on attempt {attempt + 1}: {type(e).__name__}: {e}")
                 if attempt == self.max_retries:
+                    print(f"❌ Max retries exceeded for API call")
                     raise
                 await asyncio.sleep(1)
         
@@ -641,6 +662,11 @@ async def main():
             kwargs["single_call_token_limit"] = 100    # Force chunked
     
     result = await process_document(args.file_path, **kwargs)
+    
+    print(f"\n🎉 Pipeline completed successfully!")
+    print(f"📊 Generated {len(result.get('questions', {}).get('mcq', []))} MCQ questions")
+    print(f"📊 Generated {len(result.get('questions', {}).get('short', []))} short answer questions")
+    print(f"📈 Token summary: {result.get('meta', {}).get('tokenCounts', {})}")
     
     print("\n" + "="*80)
     print("RESULT:")
